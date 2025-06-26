@@ -1,0 +1,18 @@
+
+# @package _global_
+_target_: airflow_config.Configuration
+
+src: |
+  * * * * *
+  echo "This is a cron job running every minute"
+
+
+dags:
+  cron:
+    # Default is BashOperator
+    _target_: airflow_cron.CronDAG
+    operator:
+      _target_: airflow_pydantic.SSHTask
+      ssh_hook: airflow_pydantic.tests.conftest.hook
+      cmd_timeout: 999
+    src: ${src}

@@ -25,7 +25,10 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 
-dependencies = []
+dependencies = [
+    "airflow-config",
+    "airflow-pydantic",
+]
 
 [project.optional-dependencies]
 develop = [
@@ -114,7 +117,7 @@ known-first-party = ["airflow_cron"]
 section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
 
 [tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401"]
+"__init__.py" = ["F401", "F403"]
 
 [tool.yardang]
 title = "airflow-cron"
