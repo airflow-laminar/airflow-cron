@@ -114,7 +114,6 @@ known-first-party = ["airflow_cron"]
 section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
 
 [tool.ruff.lint.per-file-ignores]
-<<<<<<< before updating
 "__init__.py" = ["F401"]
 
 [tool.yardang]
@@ -122,6 +121,3 @@ title = "airflow-cron"
 root = "README.md"
 pages = ["docs/src/API.md"]
 use-autoapi = false
-=======
-"__init__.py" = ["F401", "F403"]
->>>>>>> after updating
