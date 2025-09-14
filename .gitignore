@@ -146,6 +146,7 @@ airflow_cron/extension
 # Jupyter
 .ipynb_checkpoints
 .autoversion
+Untitled*.ipynb
 !airflow_cron/extension/airflow_cron.json
 !airflow_cron/extension/install.json
 airflow_cron/nbextension
