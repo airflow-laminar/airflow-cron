@@ -9,7 +9,7 @@ name = "airflow-cron"
 authors = [
     {name = "the airflow-cron authors", email = "t.paine154@gmail.com"},
 ]
-description = "Airflow DAG generation from cron syntax"
+description = "Cron operators and configuration for long-running tasks"
 readme = "README.md"
 license = { text = "Apache-2.0" }
 version = "0.1.0"
@@ -142,5 +142,6 @@ section-order = [
 [tool.yardang]
 title = "airflow-cron"
 root = "README.md"
-pages = ["docs/src/API.md"]
-use-autoapi = false
+pages = []
+use-autoapi = true
+

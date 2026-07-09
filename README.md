@@ -1,6 +1,6 @@
 # airflow-cron
 
-Airflow DAG generation from cron syntax
+Cron operators and configuration for long-running tasks
 
 [![Build Status](https://github.com/airflow-laminar/airflow-cron/actions/workflows/build.yaml/badge.svg?branch=main&event=push)](https://github.com/airflow-laminar/airflow-cron/actions/workflows/build.yaml)
 [![codecov](https://codecov.io/gh/airflow-laminar/airflow-cron/branch/main/graph/badge.svg)](https://codecov.io/gh/airflow-laminar/airflow-cron)
