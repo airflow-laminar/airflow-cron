@@ -1,0 +1,21 @@
+airflow_cron
+============
+
+.. py:module:: airflow_cron
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   airflow_cron.__version__
+
+
+Package Contents
+----------------
+
+.. py:data:: __version__
+   :value: '0.1.0'
+
+
