@@ -1,0 +1,22 @@
+airflow_cron.factory
+====================
+
+.. py:module:: airflow_cron.factory
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   airflow_cron.factory.create_dags
+
+
+Module Contents
+---------------
+
+.. py:function:: create_dags(config: airflow_cron.config.CronAirflowConfiguration | cron_pydantic.CronConfiguration | dict[str, Any]) -> dict[str, airflow_pydantic.Dag]
+
+   Convert enabled user-crontab jobs into airflow-pydantic DAG models.
+
+

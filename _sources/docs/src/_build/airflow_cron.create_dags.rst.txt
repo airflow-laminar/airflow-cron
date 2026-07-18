@@ -1,0 +1,6 @@
+﻿airflow\_cron.create\_dags
+==========================
+
+.. currentmodule:: airflow_cron
+
+.. autofunction:: create_dags

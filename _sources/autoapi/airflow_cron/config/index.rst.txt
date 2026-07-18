@@ -1,17 +1,7 @@
-airflow_cron
-============
+airflow_cron.config
+===================
 
-.. py:module:: airflow_cron
-
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 1
-
-   /autoapi/airflow_cron/config/index
-   /autoapi/airflow_cron/factory/index
+.. py:module:: airflow_cron.config
 
 
 Attributes
@@ -19,8 +9,7 @@ Attributes
 
 .. autoapisummary::
 
-   airflow_cron.load_airflow_config
-   airflow_cron.__version__
+   airflow_cron.config.load_airflow_config
 
 
 Classes
@@ -28,19 +17,11 @@ Classes
 
 .. autoapisummary::
 
-   airflow_cron.CronAirflowConfiguration
+   airflow_cron.config.CronAirflowConfiguration
 
 
-Functions
----------
-
-.. autoapisummary::
-
-   airflow_cron.create_dags
-
-
-Package Contents
-----------------
+Module Contents
+---------------
 
 .. py:class:: CronAirflowConfiguration(/, **data: Any)
 
@@ -76,13 +57,4 @@ Package Contents
 
 
 .. py:data:: load_airflow_config
-
-.. py:function:: create_dags(config: airflow_cron.config.CronAirflowConfiguration | cron_pydantic.CronConfiguration | dict[str, Any]) -> dict[str, airflow_pydantic.Dag]
-
-   Convert enabled user-crontab jobs into airflow-pydantic DAG models.
-
-
-.. py:data:: __version__
-   :value: '0.1.0'
-
 
