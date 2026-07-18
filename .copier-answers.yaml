@@ -6,7 +6,7 @@ add_extension: python
 add_wiki: false
 email: t.paine154@gmail.com
 github: airflow-laminar
-project_description: Cron operators and configuration for long-running tasks
+project_description: Airflow DAG generation from cron syntax
 project_name: airflow-cron
 python_version_primary: '3.11'
 team: the airflow-cron authors

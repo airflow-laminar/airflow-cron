@@ -9,11 +9,11 @@ name = "airflow-cron"
 authors = [
     {name = "the airflow-cron authors", email = "t.paine154@gmail.com"},
 ]
-description = "Cron operators and configuration for long-running tasks"
+description = "Airflow DAG generation from cron syntax"
 readme = "README.md"
 license = { text = "Apache-2.0" }
 version = "0.1.0"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 keywords = []
 
 classifiers = [
@@ -22,14 +22,16 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
 
-dependencies = []
+dependencies = [
+    "airflow-pydantic>=1.5.5,<1.6",
+    "cron-pydantic>=0.1,<0.2",
+]
 
 [project.optional-dependencies]
 develop = [
@@ -47,6 +49,16 @@ develop = [
     "ty",
     "uv",
     "wheel",
+    "airflow-pydantic>=1.5.5,<1.6",
+    "cron-pydantic>=0.1,<0.2",
+]
+airflow = [
+    "apache-airflow>=2.8,<3",
+    "apache-airflow-providers-standard",
+]
+airflow3 = [
+    "apache-airflow>=3,<3.2",
+    "apache-airflow-providers-standard",
 ]
 
 [project.scripts]
@@ -144,4 +156,3 @@ title = "airflow-cron"
 root = "README.md"
 pages = []
 use-autoapi = true
-

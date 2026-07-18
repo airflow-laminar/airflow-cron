@@ -6,4 +6,6 @@
 .. autosummary::
    :toctree: _build
 
+   CronAirflowConfiguration
+   create_dags
 ```
