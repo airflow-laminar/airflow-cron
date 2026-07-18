@@ -6,86 +6,64 @@ hidden: true
 
 
 
+docs/src/tutorial.md
+
+docs/src/how-to.md
+
+docs/src/explanation.md
+
+docs/src/api.md
+
 
 ```
 
 # airflow-cron
 
-Generate Airflow DAG models from cron configuration.
+Generate declarative Airflow DAG models from cron configuration.
 
 [![Build Status](https://github.com/airflow-laminar/airflow-cron/actions/workflows/build.yaml/badge.svg?branch=main&event=push)](https://github.com/airflow-laminar/airflow-cron/actions/workflows/build.yaml)
 [![codecov](https://codecov.io/gh/airflow-laminar/airflow-cron/branch/main/graph/badge.svg)](https://codecov.io/gh/airflow-laminar/airflow-cron)
 [![License](https://img.shields.io/github/license/airflow-laminar/airflow-cron)](https://github.com/airflow-laminar/airflow-cron)
 [![PyPI](https://img.shields.io/pypi/v/airflow-cron.svg)](https://pypi.python.org/pypi/airflow-cron)
 
-## Overview
-
-`airflow-cron` converts the user-crontab models from `cron-pydantic` into
-`airflow-pydantic` DAG and Bash task models. Each enabled cron job becomes one
-DAG containing one Bash task.
-
 ```python
 from airflow_cron import CronAirflowConfiguration, create_dags
 
-configuration = CronAirflowConfiguration.model_validate(
+config = CronAirflowConfiguration.model_validate(
     {
-        "environment": {"PATH": "/usr/local/bin:/usr/bin"},
         "job": {
             "backup": {
                 "schedule": "0 2 * * *",
-                "command": "/opt/bin/backup",
-            },
-            "cleanup": {
-                "schedule": "@weekly",
-                "command": "/opt/bin/cleanup",
-                "enabled": False,
-            },
-        },
+                "command": "/opt/jobs/backup",
+            }
+        }
     }
 )
 
-dag_models = create_dags(configuration)
+dag_models = create_dags(config)
 ```
 
-The result contains a `backup` DAG scheduled at `0 2 * * *`. Its `run` task
-uses the cron command as its Bash command and appends the configured environment
-to the worker environment. Disabled jobs are omitted.
+Each enabled user-crontab job becomes one `airflow-pydantic` DAG containing one
+Bash task. The result can be instantiated directly or added to an
+`airflow-config` configuration.
 
-To expose generated models from an Airflow DAG file:
+## Documentation
 
-```python
-for dag_id, model in dag_models.items():
-    globals()[dag_id] = model.instantiate()
-```
+- [Tutorial: generate an Airflow DAG](docs/src/tutorial.md)
+- [How-to guides](docs/src/how-to.md)
+- [Why cron jobs become DAG models](docs/src/explanation.md)
+- [API reference](docs/src/api.md)
 
-Common Airflow settings can be supplied declaratively:
+Published documentation is available at
+[airflow-laminar.github.io/airflow-cron](https://airflow-laminar.github.io/airflow-cron/).
 
-```yaml
-job:
-  backup:
-    schedule: "0 2 * * *"
-    command: /opt/bin/backup
-dag_args:
-  max_active_runs: 1
-  tags: [cron]
-task_args:
-  execution_timeout: 02:00:00
-```
+## Ecosystem
 
-`catchup` defaults to `false`, matching cron's behavior of not backfilling
-missed runs. Job schedule and command always take precedence over defaults.
-
-## Compatibility
-
-Airflow cannot faithfully represent every crontab feature. Conversion rejects:
-
-- system crontabs because Airflow executor user selection is deployment-specific
-- `@reboot` schedules
-- Cronie random ranges using `~`
-- `CRON_TZ` and `RANDOM_DELAY` scheduler environment settings
-- unescaped `%`, which cron converts into command input
-
-`@annually` maps to `@yearly`, and `@midnight` maps to `@daily`.
+- [cron-pydantic](https://github.com/airflow-laminar/cron-pydantic) provides the source crontab models.
+- [supervisor-pydantic](https://github.com/airflow-laminar/supervisor-pydantic) and [systemd-pydantic](https://github.com/airflow-laminar/systemd-pydantic) model process managers.
+- [airflow-supervisor](https://github.com/airflow-laminar/airflow-supervisor) and [airflow-systemd](https://github.com/airflow-laminar/airflow-systemd) manage long-running jobs.
+- [airflow-pydantic](https://github.com/airflow-laminar/airflow-pydantic) supplies generated DAG and task models.
+- [airflow-config](https://github.com/airflow-laminar/airflow-config) applies shared YAML configuration and materializes DAGs.
 
 > [!NOTE]
 > This library was generated using [copier](https://copier.readthedocs.io/en/stable/) from the [Base Python Project Template repository](https://github.com/python-project-templates/base).

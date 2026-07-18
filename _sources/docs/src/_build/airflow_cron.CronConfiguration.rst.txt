@@ -1,0 +1,6 @@
+﻿airflow\_cron.CronConfiguration
+===============================
+
+.. currentmodule:: airflow_cron
+
+.. autopydantic_model:: CronConfiguration

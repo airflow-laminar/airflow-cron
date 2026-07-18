@@ -1,0 +1,26 @@
+# airflow-cron
+
+> Generate Airflow DAG models from cron configuration
+
+
+the airflow-cron authors
+
+## Pages
+
+- [airflow-cron](index.html.md): Generate declarative Airflow DAG models from cron configuration.
+- [airflow_cron.CronAirflowConfiguration](docs/src/_build/airflow_cron.CronAirflowConfiguration.html.md): Bases: [`CronConfiguration`](airflow_cron.CronConfiguration.md#airflow_cron.CronConfiguration)
+- [airflow_cron.CronConfiguration](docs/src/_build/airflow_cron.CronConfiguration.html.md): Bases: `BaseModel`
+- [airflow_cron.CronJobConfiguration](docs/src/_build/airflow_cron.CronJobConfiguration.html.md): Bases: `BaseModel`
+- [airflow_cron.CronSchedule](docs/src/_build/airflow_cron.CronSchedule.html.md): Bases: `BaseModel`
+- [airflow_cron.SpecialSchedule](docs/src/_build/airflow_cron.SpecialSchedule.html.md): alias of `Literal`[[‘@reboot](mailto:'@reboot)’, [‘@yearly](mailto:'@yearly)’, [‘@annually](mailto:'...
+- [airflow_cron.create_dags](docs/src/_build/airflow_cron.create_dags.html.md): Convert enabled user-crontab jobs into airflow-pydantic DAG models.
+- [airflow_cron.load_airflow_config](docs/src/_build/airflow_cron.load_airflow_config.html.md): Page content
+- [airflow_cron.load_config](docs/src/_build/airflow_cron.load_config.html.md): Page content
+- [API reference](docs/src/api.html.md): `airflow_cron` re-exports its Airflow configuration and factory together with
+- [Why cron jobs become DAG models](docs/src/explanation.html.md): `airflow-cron` is a translation layer, not a cron installer. A cron job already
+- [How-to guides](docs/src/how-to.html.md): These guides cover common cron-to-Airflow conversion tasks.
+- [Tutorial: generate an Airflow DAG](docs/src/tutorial.html.md): In this tutorial, we will turn one YAML cron job into an Airflow DAG through
+
+---
+
+For more comprehensive documentation, see [llms-full.txt](llms-full.txt)

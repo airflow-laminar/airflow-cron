@@ -1,0 +1,6 @@
+﻿airflow\_cron.SpecialSchedule
+=============================
+
+.. currentmodule:: airflow_cron
+
+.. autodata:: SpecialSchedule

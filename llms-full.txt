@@ -1,0 +1,382 @@
+# index.html.md
+
+# airflow-cron
+
+Generate declarative Airflow DAG models from cron configuration.
+
+[![Build Status](https://github.com/airflow-laminar/airflow-cron/actions/workflows/build.yaml/badge.svg?branch=main&event=push)](https://github.com/airflow-laminar/airflow-cron/actions/workflows/build.yaml)
+[![codecov](https://codecov.io/gh/airflow-laminar/airflow-cron/branch/main/graph/badge.svg)](https://codecov.io/gh/airflow-laminar/airflow-cron)
+[![License](https://img.shields.io/github/license/airflow-laminar/airflow-cron)](https://github.com/airflow-laminar/airflow-cron)
+[![PyPI](https://img.shields.io/pypi/v/airflow-cron.svg)](https://pypi.python.org/pypi/airflow-cron)
+
+```python
+from airflow_cron import CronAirflowConfiguration, create_dags
+
+config = CronAirflowConfiguration.model_validate(
+    {
+        "job": {
+            "backup": {
+                "schedule": "0 2 * * *",
+                "command": "/opt/jobs/backup",
+            }
+        }
+    }
+)
+
+dag_models = create_dags(config)
+```
+
+Each enabled user-crontab job becomes one `airflow-pydantic` DAG containing one
+Bash task. The result can be instantiated directly or added to an
+`airflow-config` configuration.
+
+## Documentation
+
+- [Tutorial: generate an Airflow DAG](docs/src/tutorial.md)
+- [How-to guides](docs/src/how-to.md)
+- [Why cron jobs become DAG models](docs/src/explanation.md)
+- [API reference](docs/src/api.md)
+
+Published documentation is available at
+[airflow-laminar.github.io/airflow-cron](https://airflow-laminar.github.io/airflow-cron/).
+
+## Ecosystem
+
+- [cron-pydantic](https://github.com/airflow-laminar/cron-pydantic) provides the source crontab models.
+- [supervisor-pydantic](https://github.com/airflow-laminar/supervisor-pydantic) and [systemd-pydantic](https://github.com/airflow-laminar/systemd-pydantic) model process managers.
+- [airflow-supervisor](https://github.com/airflow-laminar/airflow-supervisor) and [airflow-systemd](https://github.com/airflow-laminar/airflow-systemd) manage long-running jobs.
+- [airflow-pydantic](https://github.com/airflow-laminar/airflow-pydantic) supplies generated DAG and task models.
+- [airflow-config](https://github.com/airflow-laminar/airflow-config) applies shared YAML configuration and materializes DAGs.
+
+#### NOTE
+This library was generated using [copier](https://copier.readthedocs.io/en/stable/) from the [Base Python Project Template repository](https://github.com/python-project-templates/base).
+
+
+# airflow_cron.CronAirflowConfiguration.html.md
+
+# airflow_cron.CronAirflowConfiguration
+
+### *pydantic model* airflow_cron.CronAirflowConfiguration
+
+Bases: [`CronConfiguration`](airflow_cron.CronConfiguration.md#airflow_cron.CronConfiguration)
+
+Cron configuration plus defaults for generated Airflow DAGs and tasks.
+
+#### *field* dag_args *: DagArgs* *[Optional]*
+
+#### *field* task_args *: BashTaskArgs* *[Optional]*
+
+#### create_dags() → dict[str, Dag]
+
+Create one airflow-pydantic DAG model for each enabled cron job.
+
+
+# airflow_cron.CronConfiguration.html.md
+
+# airflow_cron.CronConfiguration
+
+### *pydantic model* airflow_cron.CronConfiguration
+
+Bases: `BaseModel`
+
+Environment and named jobs rendered as one crontab file.
+
+#### *field* job *: dict[str, [CronJobConfiguration](airflow_cron.CronJobConfiguration.md#airflow_cron.CronJobConfiguration)]* *[Required]*
+
+#### *field* environment *: dict[str, str]* *[Optional]*
+
+#### *field* system *: bool* *= False*
+
+#### *field* path *: Path | None* *= None*
+
+#### to_cron() → str
+
+#### write(path: Path | str | None = None) → Path
+
+#### *classmethod* from_cron(contents: str, , system: bool = False, path: Path | None = None) → Self
+
+#### *classmethod* load(path: Path | str) → Self
+
+
+# airflow_cron.CronJobConfiguration.html.md
+
+# airflow_cron.CronJobConfiguration
+
+### *pydantic model* airflow_cron.CronJobConfiguration
+
+Bases: `BaseModel`
+
+Command and schedule for one crontab entry.
+
+#### *field* schedule *: [CronSchedule](airflow_cron.CronSchedule.md#airflow_cron.CronSchedule) | SpecialSchedule* *[Required]*
+
+#### *field* command *: Command* *[Required]*
+
+#### *field* user *: str | None* *= None*
+
+#### *field* enabled *: bool* *= True*
+
+#### to_cron(system: bool = False) → str
+
+
+# airflow_cron.CronSchedule.html.md
+
+# airflow_cron.CronSchedule
+
+### *pydantic model* airflow_cron.CronSchedule
+
+Bases: `BaseModel`
+
+Five-field Vixie/Cronie schedule.
+
+#### *field* minute *: str | int* *= '\*'*
+
+#### *field* hour *: str | int* *= '\*'*
+
+#### *field* day_of_month *: str | int* *= '\*'*
+
+#### *field* month *: str | int* *= '\*'*
+
+#### *field* day_of_week *: str | int* *= '\*'*
+
+#### to_cron() → str
+
+#### *classmethod* from_cron(expression: str) → Self
+
+
+# airflow_cron.SpecialSchedule.html.md
+
+# airflow_cron.SpecialSchedule
+
+### airflow_cron.SpecialSchedule
+
+alias of `Literal`[[‘@reboot](mailto:'@reboot)’, [‘@yearly](mailto:'@yearly)’, [‘@annually](mailto:'@annually)’, [‘@monthly](mailto:'@monthly)’, [‘@weekly](mailto:'@weekly)’, [‘@daily](mailto:'@daily)’, [‘@midnight](mailto:'@midnight)’, [‘@hourly](mailto:'@hourly)’]
+
+
+# airflow_cron.create_dags.html.md
+
+# airflow_cron.create_dags
+
+### airflow_cron.create_dags(config: [CronAirflowConfiguration](airflow_cron.CronAirflowConfiguration.md#airflow_cron.CronAirflowConfiguration) | [CronConfiguration](airflow_cron.CronConfiguration.md#airflow_cron.CronConfiguration) | dict[str, Any]) → dict[str, Dag]
+
+Convert enabled user-crontab jobs into airflow-pydantic DAG models.
+
+
+# airflow_cron.load_airflow_config.html.md
+
+# airflow_cron.load_airflow_config
+
+### airflow_cron.load_airflow_config(path: Path | str) → Self
+
+
+# airflow_cron.load_config.html.md
+
+# airflow_cron.load_config
+
+### airflow_cron.load_config(path: Path | str) → Self
+
+
+# api.html.md
+
+# API reference
+
+`airflow_cron` re-exports its Airflow configuration and factory together with
+the underlying `cron-pydantic` models.
+
+| [`CronAirflowConfiguration`](_build/airflow_cron.CronAirflowConfiguration.md#airflow_cron.CronAirflowConfiguration)   | Cron configuration plus defaults for generated Airflow DAGs and tasks.                                                                                                                                                                                                     |
+|-----------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`create_dags`](_build/airflow_cron.create_dags.md#airflow_cron.create_dags)(config)                                  | Convert enabled user-crontab jobs into airflow-pydantic DAG models.                                                                                                                                                                                                        |
+| [`CronSchedule`](_build/airflow_cron.CronSchedule.md#airflow_cron.CronSchedule)                                       | Five-field Vixie/Cronie schedule.                                                                                                                                                                                                                                          |
+| [`CronJobConfiguration`](_build/airflow_cron.CronJobConfiguration.md#airflow_cron.CronJobConfiguration)               | Command and schedule for one crontab entry.                                                                                                                                                                                                                                |
+| [`CronConfiguration`](_build/airflow_cron.CronConfiguration.md#airflow_cron.CronConfiguration)                        | Environment and named jobs rendered as one crontab file.                                                                                                                                                                                                                   |
+| [`SpecialSchedule`](_build/airflow_cron.SpecialSchedule.md#airflow_cron.SpecialSchedule)                              | alias of `Literal`[['@reboot](mailto:'@reboot)', ['@yearly](mailto:'@yearly)', ['@annually](mailto:'@annually)', ['@monthly](mailto:'@monthly)', ['@weekly](mailto:'@weekly)', ['@daily](mailto:'@daily)', ['@midnight](mailto:'@midnight)', ['@hourly](mailto:'@hourly)'] |
+| [`load_config`](_build/airflow_cron.load_config.md#airflow_cron.load_config)(path)                                    |                                                                                                                                                                                                                                                                            |
+| [`load_airflow_config`](_build/airflow_cron.load_airflow_config.md#airflow_cron.load_airflow_config)(path)            |                                                                                                                                                                                                                                                                            |
+
+
+# explanation.html.md
+
+# Why cron jobs become DAG models
+
+`airflow-cron` is a translation layer, not a cron installer. A cron job already
+contains the essential shape of a simple Airflow workflow: a schedule, a command,
+an enabled state, and an environment. The package maps that shape to an
+`airflow-pydantic` DAG with one Bash task.
+
+The model boundary keeps Airflow imports out of configuration parsing. Generated
+models can be inspected, combined with `airflow-config`, rendered as code, or
+instantiated only when an Airflow process loads the DAG file.
+
+## Semantic limits
+
+Cron and Airflow are different schedulers. Cron can select a Unix user in a
+system crontab, start work during boot, randomize fields, and split a command at
+an unescaped `%`. Airflow delegates users to its executor, has no reboot event,
+and sends a Bash command as one command string.
+
+Rejecting those features is deliberate. A conversion tool should not produce a
+DAG that looks valid while running at a different time or under a different
+security identity.
+
+## Relationship to process supervisors
+
+[airflow-supervisor](https://github.com/airflow-laminar/airflow-supervisor) and
+[airflow-systemd](https://github.com/airflow-laminar/airflow-systemd) orchestrate
+external process lifecycles and monitor their state. `airflow-cron` instead moves
+schedule ownership into Airflow and runs the command as an ordinary task.
+
+Use a supervisor integration when the external service manager must retain
+ownership of the process. Use cron conversion when a cron entry is fundamentally
+a scheduled batch command that Airflow can own directly.
+
+
+# how-to.html.md
+
+# How-to guides
+
+These guides cover common cron-to-Airflow conversion tasks.
+
+## How to apply common DAG and task settings
+
+Set `dag_args` and `task_args` beside the cron jobs:
+
+```yaml
+job:
+  report:
+    schedule: "30 6 * * mon-fri"
+    command: /opt/jobs/report
+dag_args:
+  catchup: false
+  max_active_runs: 1
+  tags: [imported-cron]
+task_args:
+  pool: batch
+  execution_timeout: 02:00:00
+  env:
+    REPORT_FORMAT: json
+```
+
+Job schedule and command override the corresponding common fields. Task
+environment values override crontab environment values with the same names.
+
+## How to combine generated and hand-written airflow-config DAGs
+
+Load the existing Airflow configuration and merge the generated models before
+materializing it:
+
+```python
+from airflow_config import Configuration, load_config
+from airflow_cron import CronAirflowConfiguration, create_dags
+
+base = load_config("config", "production")
+cron = CronAirflowConfiguration.load("cron.yaml")
+
+config = Configuration.model_validate(
+    {
+        **base.model_dump(),
+        "dags": {**(base.dags or {}), **create_dags(cron)},
+    }
+)
+config.generate_in_mem()
+```
+
+Use unique cron job names because each name becomes an Airflow DAG ID.
+
+## How to disable a generated DAG
+
+Disable the source job:
+
+```yaml
+job:
+  retired-report:
+    schedule: "@weekly"
+    command: /opt/jobs/report
+    enabled: false
+```
+
+Disabled jobs are omitted from `create_dags()` rather than emitted as paused
+DAGs.
+
+## How to handle unsupported cron features
+
+Replace unsupported scheduler semantics before conversion:
+
+- Replace `@annually` with the equivalent generated `@yearly` schedule, or let
+  the built-in mapping do it.
+- Replace `@midnight` with `@daily`, or let the built-in mapping do it.
+- Move `CRON_TZ` behavior into Airflow’s DAG timezone configuration.
+- Replace Cronie `~` randomization with Airflow-native delay logic.
+- Keep `@reboot`, system-user entries, and cron `%` stdin handling in a real
+  cron or systemd deployment.
+
+Conversion raises `ValueError` when it would otherwise change these semantics
+silently.
+
+
+# tutorial.html.md
+
+# Tutorial: generate an Airflow DAG
+
+In this tutorial, we will turn one YAML cron job into an Airflow DAG through
+`airflow-config`.
+
+## Install the packages
+
+For Airflow 3, run:
+
+```bash
+pip install 'airflow-cron[airflow3]' airflow-config
+```
+
+Use the `airflow` extra instead when running Airflow 2.
+
+## Describe the cron job
+
+Create `cron.yaml`:
+
+```yaml
+environment:
+  PATH: /usr/local/bin:/usr/bin
+job:
+  backup:
+    schedule: "0 2 * * *"
+    command: /opt/jobs/backup
+dag_args:
+  max_active_runs: 1
+  tags: [cron]
+```
+
+## Register the generated DAG
+
+Create an Airflow DAG file:
+
+```python
+from airflow_config import Configuration
+from airflow_cron import CronAirflowConfiguration, create_dags
+
+cron = CronAirflowConfiguration.load("cron.yaml")
+config = Configuration(
+    default_dag_args={"start_date": "2024-01-01"},
+    dags=create_dags(cron),
+)
+config.generate_in_mem()
+```
+
+Place both files where the Airflow scheduler can read them, keeping the relative
+path from the DAG file to `cron.yaml` unchanged.
+
+## Inspect the result
+
+Parse the DAG folder with Airflow:
+
+```bash
+airflow dags list | grep backup
+```
+
+The output contains a DAG named `backup`. In the graph view it contains one task
+named `run`, scheduled with `0 2 * * *`.
+
+You have now converted cron data into an Airflow-owned schedule without
+installing a host crontab.
+
+

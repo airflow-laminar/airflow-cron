@@ -1,0 +1,6 @@
+﻿airflow\_cron.load\_airflow\_config
+===================================
+
+.. currentmodule:: airflow_cron
+
+.. autofunction:: load_airflow_config
