@@ -1,8 +1,8 @@
 # airflow_cron.CronAirflowConfiguration
 
-### *pydantic model* airflow_cron.CronAirflowConfiguration
+### *pydantic model* airflow_cron.CronAirflowConfiguration[[source]](../../../_modules/airflow_cron/config.html.md#CronAirflowConfiguration)
 
-Bases: [`CronConfiguration`](airflow_cron.CronConfiguration.md#airflow_cron.CronConfiguration)
+Bases: [`CronConfiguration`](airflow_cron.CronConfiguration.html.md#airflow_cron.CronConfiguration)
 
 Cron configuration plus defaults for generated Airflow DAGs and tasks.
 
@@ -10,6 +10,6 @@ Cron configuration plus defaults for generated Airflow DAGs and tasks.
 
 #### *field* task_args *: BashTaskArgs* *[Optional]*
 
-#### create_dags() → dict[str, Dag]
+#### create_dags() → dict[str, Dag][[source]](../../../_modules/airflow_cron/config.html.md#CronAirflowConfiguration.create_dags)
 
 Create one airflow-pydantic DAG model for each enabled cron job.

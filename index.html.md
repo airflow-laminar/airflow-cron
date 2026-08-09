@@ -30,10 +30,10 @@ Bash task. The result can be instantiated directly or added to an
 
 ## Documentation
 
-- [Tutorial: generate an Airflow DAG](docs/src/tutorial.md)
-- [How-to guides](docs/src/how-to.md)
-- [Why cron jobs become DAG models](docs/src/explanation.md)
-- [API reference](docs/src/api.md)
+- [Tutorial: generate an Airflow DAG](docs/src/tutorial.html.md)
+- [How-to guides](docs/src/how-to.html.md)
+- [Why cron jobs become DAG models](docs/src/explanation.html.md)
+- [API reference](docs/src/api.html.md)
 
 Published documentation is available at
 [airflow-laminar.github.io/airflow-cron](https://airflow-laminar.github.io/airflow-cron/).
