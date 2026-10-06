@@ -102,3 +102,11 @@ def test_create_dags_accepts_escaped_percent() -> None:
 
     assert dag.tasks is not None
     assert dag.tasks["run"].bash_command == r"date +\%F"
+
+
+def test_create_dags_preserves_explicit_null_skip_exit_code() -> None:
+    dag = create_dags({"job": {"probe": {"schedule": "@daily", "command": "exit 99"}}, "task_args": {"skip_on_exit_code": None}})["probe"]
+    assert dag.tasks is not None
+    task = dag.tasks["run"]
+    assert "skip_on_exit_code" in task.model_fields_set
+    assert task.model_dump(exclude_unset=True)["skip_on_exit_code"] is None
