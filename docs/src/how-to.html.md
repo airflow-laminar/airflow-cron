@@ -77,3 +77,54 @@ Replace unsupported scheduler semantics before conversion:
 
 Conversion raises `ValueError` when it would otherwise change these semantics
 silently.
+
+## How to collect output and alert on failures
+
+Generated jobs execute through Airflow’s `BashOperator`. Leave stdout and stderr
+unredirected to see both streams in the `run` task log. Configure a failure
+callback and retries through `task_args`:
+
+```python
+from airflow_cron import CronAirflowConfiguration
+
+
+def alert(context):
+    context["task"].log.error("Cron job failed: %s", context["exception"])
+
+
+cron = CronAirflowConfiguration.model_validate(
+    {
+        "job": {"report": {"schedule": "@daily", "command": "/opt/jobs/report"}},
+        "dag_args": {"start_date": "2025-01-01", "catchup": False},
+        "task_args": {"on_failure_callback": alert, "retries": 0},
+    }
+)
+report = cron.create_dags()["report"].instantiate()
+```
+
+For YAML, put an importable `report_failed(context)` function in `alerts.py`
+beside your DAG files:
+
+```yaml
+job:
+  report:
+    schedule: "@daily"
+    command: /opt/jobs/report
+dag_args:
+  start_date: "2025-01-01"
+  catchup: false
+task_args:
+  on_failure_callback: alerts.report_failed
+  retries: 0
+  skip_on_exit_code: null
+```
+
+Load with `CronAirflowConfiguration.load()` and merge `create_dags(cron)` into
+an `airflow-config` configuration as shown above. Explicit
+`skip_on_exit_code: null` makes every nonzero exit fail the task. Without that
+setting, `BashOperator` treats exit code 99 as a skip. For compound commands,
+use `set -e` or explicitly propagate the failing command’s exit code.
+
+Airflow runs the schedule and invokes configured callbacks after task failure.
+These settings observe the generated Airflow tasks; jobs left in a separate
+system crontab need their own monitoring.

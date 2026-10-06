@@ -189,6 +189,52 @@ cron or systemd deployment.</p></li>
 <p>Conversion raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> when it would otherwise change these semantics
 silently.</p>
 </section>
+<section id="how-to-collect-output-and-alert-on-failures">
+<h2>How to collect output and alert on failures<a class="headerlink" href="#how-to-collect-output-and-alert-on-failures" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#how-to-collect-output-and-alert-on-failures'">¶</a></h2>
+<p>Generated jobs execute through Airflow’s <code class="docutils literal notranslate"><span class="pre">BashOperator</span></code>. Leave stdout and stderr
+unredirected to see both streams in the <code class="docutils literal notranslate"><span class="pre">run</span></code> task log. Configure a failure
+callback and retries through <code class="docutils literal notranslate"><span class="pre">task_args</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">airflow_cron</span><span class="w"> </span><span class="kn">import</span> <span class="n">CronAirflowConfiguration</span>
+</span><span id="line-2">
+</span><span id="line-3">
+</span><span id="line-4"><span class="k">def</span><span class="w"> </span><span class="nf">alert</span><span class="p">(</span><span class="n">context</span><span class="p">):</span>
+</span><span id="line-5">    <span class="n">context</span><span class="p">[</span><span class="s2">"task"</span><span class="p">]</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Cron job failed: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">context</span><span class="p">[</span><span class="s2">"exception"</span><span class="p">])</span>
+</span><span id="line-6">
+</span><span id="line-7">
+</span><span id="line-8"><span class="n">cron</span> <span class="o">=</span> <span class="n">CronAirflowConfiguration</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span>
+</span><span id="line-9">    <span class="p">{</span>
+</span><span id="line-10">        <span class="s2">"job"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"report"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"schedule"</span><span class="p">:</span> <span class="s2">"@daily"</span><span class="p">,</span> <span class="s2">"command"</span><span class="p">:</span> <span class="s2">"/opt/jobs/report"</span><span class="p">}},</span>
+</span><span id="line-11">        <span class="s2">"dag_args"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"start_date"</span><span class="p">:</span> <span class="s2">"2025-01-01"</span><span class="p">,</span> <span class="s2">"catchup"</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+</span><span id="line-12">        <span class="s2">"task_args"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"on_failure_callback"</span><span class="p">:</span> <span class="n">alert</span><span class="p">,</span> <span class="s2">"retries"</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+</span><span id="line-13">    <span class="p">}</span>
+</span><span id="line-14"><span class="p">)</span>
+</span><span id="line-15"><span class="n">report</span> <span class="o">=</span> <span class="n">cron</span><span class="o">.</span><span class="n">create_dags</span><span class="p">()[</span><span class="s2">"report"</span><span class="p">]</span><span class="o">.</span><span class="n">instantiate</span><span class="p">()</span>
+</span></code></pre></div>
+</div>
+<p>For YAML, put an importable <code class="docutils literal notranslate"><span class="pre">report_failed(context)</span></code> function in <code class="docutils literal notranslate"><span class="pre">alerts.py</span></code>
+beside your DAG files:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="nt">job</span><span class="p">:</span>
+</span><span id="line-2"><span class="w">  </span><span class="nt">report</span><span class="p">:</span>
+</span><span id="line-3"><span class="w">    </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">"@daily"</span>
+</span><span id="line-4"><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/jobs/report</span>
+</span><span id="line-5"><span class="nt">dag_args</span><span class="p">:</span>
+</span><span id="line-6"><span class="w">  </span><span class="nt">start_date</span><span class="p">:</span><span class="w"> </span><span class="s">"2025-01-01"</span>
+</span><span id="line-7"><span class="w">  </span><span class="nt">catchup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="line-8"><span class="nt">task_args</span><span class="p">:</span>
+</span><span id="line-9"><span class="w">  </span><span class="nt">on_failure_callback</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">alerts.report_failed</span>
+</span><span id="line-10"><span class="w">  </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+</span><span id="line-11"><span class="w">  </span><span class="nt">skip_on_exit_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+</span></code></pre></div>
+</div>
+<p>Load with <code class="docutils literal notranslate"><span class="pre">CronAirflowConfiguration.load()</span></code> and merge <code class="docutils literal notranslate"><span class="pre">create_dags(cron)</span></code> into
+an <code class="docutils literal notranslate"><span class="pre">airflow-config</span></code> configuration as shown above. Explicit
+<code class="docutils literal notranslate"><span class="pre">skip_on_exit_code:</span> <span class="pre">null</span></code> makes every nonzero exit fail the task. Without that
+setting, <code class="docutils literal notranslate"><span class="pre">BashOperator</span></code> treats exit code 99 as a skip. For compound commands,
+use <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">-e</span></code> or explicitly propagate the failing command’s exit code.</p>
+<p>Airflow runs the schedule and invokes configured callbacks after task failure.
+These settings observe the generated Airflow tasks; jobs left in a separate
+system crontab need their own monitoring.</p>
+</section>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
@@ -197,6 +243,7 @@ silently.</p>
 <li><a :data-current="activeSection === '#how-to-combine-generated-and-hand-written-airflow-config-dags'" class="reference internal" href="#how-to-combine-generated-and-hand-written-airflow-config-dags">How to combine generated and hand-written airflow-config DAGs</a></li>
 <li><a :data-current="activeSection === '#how-to-disable-a-generated-dag'" class="reference internal" href="#how-to-disable-a-generated-dag">How to disable a generated DAG</a></li>
 <li><a :data-current="activeSection === '#how-to-handle-unsupported-cron-features'" class="reference internal" href="#how-to-handle-unsupported-cron-features">How to handle unsupported cron features</a></li>
+<li><a :data-current="activeSection === '#how-to-collect-output-and-alert-on-failures'" class="reference internal" href="#how-to-collect-output-and-alert-on-failures">How to collect output and alert on failures</a></li>
 </ul>
 </div>
 </aside>
