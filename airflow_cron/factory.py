@@ -46,6 +46,8 @@ def _create_dag(name: str, job: CronJobConfiguration, cfg: CronAirflowConfigurat
         exclude_unset=True,
         exclude={"append_env", "bash_command", "env"},
     )
+    if "skip_on_exit_code" in cfg.task_args.model_fields_set:
+        task_args["skip_on_exit_code"] = cfg.task_args.skip_on_exit_code
     environment = {**cfg.environment, **(cfg.task_args.env or {})} or None
     append_environment = cfg.task_args.append_env
     if append_environment is None and environment:
