@@ -2,6 +2,9 @@ from datetime import UTC, datetime
 from unittest.mock import Mock
 
 import pytest
+
+pytest.importorskip("airflow")
+
 from airflow.exceptions import AirflowException, AirflowSkipException
 
 from airflow_cron import CronAirflowConfiguration
