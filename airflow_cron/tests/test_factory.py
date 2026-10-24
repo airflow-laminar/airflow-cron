@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 import pytest
+from airflow_pydantic import BashTask
 
 from airflow_cron import CronAirflowConfiguration, CronConfiguration, create_dags
 
@@ -25,6 +26,7 @@ def test_create_dags() -> None:
     assert dag.tasks is not None
     assert list(dag.tasks) == ["run"]
     task = dag.tasks["run"]
+    assert isinstance(task, BashTask)
     assert task.bash_command == "backup"
     assert task.env == {"PATH": "/opt/bin"}
     assert task.append_env is True
@@ -46,6 +48,7 @@ def test_create_dags_applies_airflow_defaults() -> None:
     dag = create_dags(configuration)["report"]
     assert dag.tasks is not None
     task = dag.tasks["run"]
+    assert isinstance(task, BashTask)
 
     assert dag.catchup is True
     assert dag.max_active_runs == 1
@@ -101,7 +104,9 @@ def test_create_dags_accepts_escaped_percent() -> None:
     dag = create_dags({"job": {"job": {"schedule": "@daily", "command": r"date +\%F"}}})["job"]
 
     assert dag.tasks is not None
-    assert dag.tasks["run"].bash_command == r"date +\%F"
+    task = dag.tasks["run"]
+    assert isinstance(task, BashTask)
+    assert task.bash_command == r"date +\%F"
 
 
 def test_create_dags_preserves_explicit_null_skip_exit_code() -> None:
